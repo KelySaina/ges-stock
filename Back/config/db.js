@@ -8,7 +8,8 @@ const { DB_HOST, DB_USER, DB_PASS, DB_NAME } = process.env;
 // Validate required environment variables
 if (!DB_HOST || !DB_USER || !DB_PASS || !DB_NAME) {
   console.error("Missing database environment variables.");
-  process.exit(1);S
+  process.exit(1);
+  S;
 }
 
 const pool = mysql.createPool({
