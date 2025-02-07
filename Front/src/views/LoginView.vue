@@ -136,6 +136,12 @@ const login = async () => {
             />
           </svg>
         </button>
+        <p class="text-center">Or</p>
+        <button
+          class="w-full border-1 border-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-1 justify-center"
+        >
+          <span>Use KS Network</span>
+        </button>
       </form>
     </div>
   </div>
