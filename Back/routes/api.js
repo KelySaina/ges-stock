@@ -17,13 +17,13 @@ router.put("/users/:id", updateUser);
 router.delete("/users/:id", deleteUser);
 
 // Protected Routes
-router.get(
-  "/stock",
-  authMiddleware,
-  checkPermission("view_stock"),
-  (req, res) => {
-    res.json({ message: "Stock data" });
-  }
-);
+// router.get(
+//   "/stock",
+//   authMiddleware,
+//   checkPermission("view_stock"),
+//   (req, res) => {
+//     res.json({ message: "Stock data" });
+//   }
+// );
 
 module.exports = router;

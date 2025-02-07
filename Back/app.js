@@ -23,7 +23,7 @@ app.use("/api", apiRoutes);
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: "Internal Server Error" });
+  res.status(500).json({ error: "Internal Server Error: "+ err });
 });
 
 // Start Server
