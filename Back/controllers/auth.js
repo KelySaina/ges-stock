@@ -19,7 +19,7 @@ const login = async (req, res) => {
     { expiresIn: "1h" }
   );
 
-  res.cookie("token", token, { httpOnly: true }).json({ success: true });
+  res.json({ success: true, token });
 };
 
 module.exports = { login };

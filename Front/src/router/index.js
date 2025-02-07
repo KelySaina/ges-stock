@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/LoginView.vue'
+import AdminDashboardView from '@/views/AdminDashboardView.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: LoginView },
-  // { path: '/stock', component: StockView, meta: { requiresAuth: true } },
+  { path: '/dashboard', component: AdminDashboardView, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
