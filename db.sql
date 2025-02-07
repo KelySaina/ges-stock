@@ -105,3 +105,16 @@ INSERT INTO role_permissions (role_id, permission_id) VALUES
   (1, 1), (1, 2), (1, 3), -- Admin
   (2, 1), (2, 2), (2, 4), -- Manager
   (3, 1), (3, 5);         -- Employee
+
+-- Insert Admin User
+INSERT INTO users (username, password_hash, email) 
+VALUES ('admin', '$2a$10$6GEB2JQ4Z.oTBkmiCbnMXOMPBe0R5Zgaws3r9OLg8H.qRhF44Zbpq', 'admin@example.com');
+
+-- Get Admin User ID
+SET @admin_id = LAST_INSERT_ID();
+
+-- Get Admin Role ID
+SET @admin_role_id = (SELECT id FROM roles WHERE name = 'admin');
+
+-- Assign Admin Role to User
+INSERT INTO user_roles (user_id, role_id) VALUES (@admin_id, @admin_role_id);
