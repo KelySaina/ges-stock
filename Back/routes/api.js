@@ -1,6 +1,13 @@
 const express = require("express");
 const authController = require("../controllers/auth");
-const { getAllUsers, getUserById, createUser, updateUser, deleteUser } = require("../controllers/users");
+const {
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+} = require("../controllers/users");
+const { getAllRoles } = require("../controllers/roles");
 const authMiddleware = require("../middlewares/auth");
 const checkPermission = require("../middlewares/rbac");
 
@@ -15,6 +22,9 @@ router.get("/users/:id", getUserById);
 router.post("/users", createUser);
 router.put("/users/:id", updateUser);
 router.delete("/users/:id", deleteUser);
+
+// Roles routes
+router.get("/roles", getAllRoles);
 
 // Protected Routes
 router.get(

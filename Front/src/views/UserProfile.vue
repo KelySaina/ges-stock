@@ -14,15 +14,31 @@ const user = ref({
   role: '',
 })
 
+const roles = ref({
+  id: '',
+  name: '',
+})
+
 // États pour l'édition et le chargement
 const isEditing = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
 
+const fetchRoles = async () => {
+  try {
+    const response = await axios.get(`http://localhost:5000/api/roles`)
+    console.log(response)
+    roles.value = response.data
+  } catch (error) {
+    console.error('Erreur chargement utilisateur:', error)
+  }
+}
+
 // Charger les infos de l'utilisateur depuis l'API
 const fetchUser = async () => {
   try {
     const response = await axios.get(`http://localhost:5000/api/users/${userId}`)
+    console.log(response)
     user.value = response.data
   } catch (error) {
     console.error('Erreur chargement utilisateur:', error)
@@ -44,7 +60,10 @@ const updateUser = async () => {
 }
 
 // Charger les données à l'affichage du composant
-onMounted(fetchUser)
+onMounted(() => {
+  fetchRoles()
+  fetchUser()
+})
 </script>
 
 <template>
@@ -59,9 +78,9 @@ onMounted(fetchUser)
       <!-- Champs utilisateur -->
       <div class="space-y-4">
         <div>
-          <label class="block text-gray-300">Nom</label>
+          <label class="block text-gray-300">Name</label>
           <input
-            v-model="user.name"
+            v-model="user.username"
             :disabled="!isEditing"
             class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
           />
@@ -84,9 +103,9 @@ onMounted(fetchUser)
             :disabled="!isEditing"
             class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
           >
-            <option value="Admin">Admin</option>
-            <option value="Utilisateur">Utilisateur</option>
-            <option value="Modérateur">Modérateur</option>
+            <option v-for="role in roles" :key="role.id" :value="role.id">
+              {{ role.name.charAt(0).toUpperCase() + role.name.slice(1) }}
+            </option>
           </select>
         </div>
       </div>

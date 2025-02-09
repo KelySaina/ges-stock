@@ -26,15 +26,34 @@ const getUserById = async (req, res) => {
 
 // Create a new user
 const createUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, roleId } = req.body;
+  const connection = await pool.getConnection(); // Get connection for transaction
+
   try {
-    const [result] = await pool.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+    await connection.beginTransaction(); // Start transaction
+
+    // Insert user into users table
+    const [userResult] = await connection.query(
+      "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
       [name, email, password]
     );
-    res.status(201).json({ message: "User created", userId: result.insertId });
+
+    const userId = userResult.insertId; // Get the newly created userId
+
+    // Insert user role into user_roles table
+    await connection.query(
+      "INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)",
+      [userId, roleId]
+    );
+
+    await connection.commit(); // Commit transaction
+
+    res.status(201).json({ message: "User created", userId });
   } catch (err) {
+    await connection.rollback(); // Rollback transaction on error
     res.status(500).json({ error: err.message });
+  } finally {
+    connection.release(); // Release connection
   }
 };
 
@@ -44,7 +63,7 @@ const updateUser = async (req, res) => {
   const { name, email, password } = req.body;
   try {
     const [result] = await pool.query(
-      "UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?",
+      "UPDATE users SET username = ?, email = ?, password_hash = ? WHERE id = ?",
       [name, email, password, id]
     );
     if (result.affectedRows === 0) {
