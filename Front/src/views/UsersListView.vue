@@ -1,20 +1,19 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { User, Mail, Briefcase, Grid, List } from 'lucide-vue-next'
 import NavBar from '@/components/NavBar.vue'
 import router from '@/router'
 import CreateUser from '@/components/CreateUser.vue'
+import axios from 'axios'
 
-const users = ref([
-  { id: 1, name: 'Alice Dupont', email: 'alice@example.com', role: 'Admin' },
-  { id: 2, name: 'Jean Martin', email: 'jean@example.com', role: 'Utilisateur' },
-  { id: 3, name: 'Sophie Bernard', email: 'sophie@example.com', role: 'Modérateur' },
-  { id: 4, name: 'Thomas Durand', email: 'thomas@example.com', role: 'Utilisateur' },
-  { id: 5, name: 'Emma Lefevre', email: 'emma@example.com', role: 'Admin' },
-  { id: 6, name: 'Lucas Moreau', email: 'lucas@example.com', role: 'Utilisateur' },
-  { id: 7, name: 'Chloé Simon', email: 'chloe@example.com', role: 'Modérateur' },
-  { id: 8, name: 'Nathan Robert', email: 'nathan@example.com', role: 'Utilisateur' },
-])
+const users = ref([])
+
+const fetchUser = async () => {
+  const userResponse = await axios.get('http://localhost:5000/api/users')
+  users.value = userResponse.data
+}
+
+onMounted(fetchUser)
 
 const search = ref('')
 
@@ -34,9 +33,9 @@ const paginatedUsers = computed(() => {
   // Filter users based on name or role
   const filteredUsers = users.value.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchQuery) ||
+      user.username.toLowerCase().includes(searchQuery) ||
       user.email.toLowerCase().includes(searchQuery) ||
-      user.role.toLowerCase().includes(searchQuery),
+      user.role_name.toLowerCase().includes(searchQuery),
   )
 
   // Apply pagination AFTER filtering
@@ -105,13 +104,13 @@ const isModalOpen = ref(false)
               @click="openProfile(user.id)"
             >
               <td class="p-3 w-1/3">
-                <span>{{ user.name }}</span>
+                <span>{{ user.username }}</span>
               </td>
               <td class="p-3 w-1/3">
                 <span>{{ user.email }}</span>
               </td>
               <td class="p-3 w-1/3">
-                <span>{{ user.role }}</span>
+                <span>{{ user.role_name.charAt(0).toUpperCase() + user.role_name.slice(1) }}</span>
               </td>
             </tr>
           </tbody>
@@ -127,13 +126,14 @@ const isModalOpen = ref(false)
         >
           <div class="flex items-center gap-3">
             <User class="w-8 h-8 text-blue-400" />
-            <h3 class="text-lg font-semibold">{{ user.name }}</h3>
+            <h3 class="text-lg font-semibold">{{ user.username }}</h3>
           </div>
           <p class="mt-2 flex items-center gap-2 text-gray-400">
             <Mail class="w-5 h-5" /> {{ user.email }}
           </p>
           <p class="mt-2 flex items-center gap-2 text-gray-400">
-            <Briefcase class="w-5 h-5" /> {{ user.role }}
+            <Briefcase class="w-5 h-5" />
+            {{ user.role_name.charAt(0).toUpperCase() + user.role_name.slice(1) }}
           </p>
         </div>
       </div>

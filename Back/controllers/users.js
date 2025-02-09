@@ -4,7 +4,17 @@ const bcrypt = require("bcryptjs");
 // Get all users
 const getAllUsers = async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM users");
+    const [rows] = await pool.query(
+      `SELECT 
+          users.username, 
+          users.id, 
+          users.email, 
+          roles.name AS role_name
+      FROM users
+      JOIN user_roles ON users.id = user_roles.user_id
+      JOIN roles ON roles.id = user_roles.role_id;
+      `
+    );
     res.status(200).json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -15,7 +25,17 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   const { id } = req.params;
   try {
-    const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
+    const [rows] = await pool.query(
+      `SELECT 
+          users.username, 
+          users.id, 
+          users.email, 
+          roles.id AS role_id
+      FROM users
+      JOIN user_roles ON users.id = user_roles.user_id
+      JOIN roles ON roles.id = user_roles.role_id WHERE users.id = ?`,
+      [id]
+    );
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -81,7 +101,7 @@ const createUser = async (req, res) => {
 // Update a user
 const updateUser = async (req, res) => {
   const { id } = req.params; // Get user ID from the route parameter
-  const { username, password, email } = req.body;
+  const { username, password, email, role_id } = req.body;
 
   // Validate input
   if (!username && !password && !email) {
@@ -129,6 +149,12 @@ const updateUser = async (req, res) => {
 
     // Execute the query
     await pool.query(query, values);
+
+    // Build the update query for role
+    const queryRole = `UPDATE user_roles SET role_id = ? WHERE user_id = ?`;
+
+    // Execute the query
+    await pool.query(queryRole, [role_id, id]);
 
     res.status(200).json({ message: "User updated successfully." });
   } catch (error) {

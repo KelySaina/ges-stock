@@ -9,15 +9,12 @@ const userId = route.params.id
 
 // Réactif pour stocker les infos de l'utilisateur
 const user = ref({
-  name: '',
+  username: '',
   email: '',
-  role: '',
+  role_name: '',
 })
 
-const roles = ref({
-  id: '',
-  name: '',
-})
+const roles = ref([])
 
 // États pour l'édition et le chargement
 const isEditing = ref(false)
@@ -27,7 +24,6 @@ const errorMessage = ref('')
 const fetchRoles = async () => {
   try {
     const response = await axios.get(`http://localhost:5000/api/roles`)
-    console.log(response)
     roles.value = response.data
   } catch (error) {
     console.error('Erreur chargement utilisateur:', error)
@@ -60,7 +56,7 @@ const updateUser = async () => {
 }
 
 // Charger les données à l'affichage du composant
-onMounted(() => {
+onMounted(async () => {
   fetchRoles()
   fetchUser()
 })
@@ -99,7 +95,7 @@ onMounted(() => {
         <div>
           <label class="block text-gray-300">Rôle</label>
           <select
-            v-model="user.role"
+            v-model="user.role_id"
             :disabled="!isEditing"
             class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
           >

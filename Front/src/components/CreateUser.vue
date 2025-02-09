@@ -8,9 +8,9 @@ const emit = defineEmits(['close'])
 
 // User data model
 const user = ref({
-  name: '',
+  username: '',
   email: '',
-  role: '',
+  roleId: '',
   password: '',
 })
 
@@ -24,8 +24,8 @@ const errorMessage = ref('')
 // Fetch roles from API
 onMounted(async () => {
   try {
-    const response = await axios.get('http://localhost:5000/api/roles')
-    roles.value = response.data
+    const roleResponse = await axios.get('http://localhost:5000/api/roles')
+    roles.value = roleResponse.data
   } catch (error) {
     console.error('Erreur lors du chargement des rôles:', error)
   }
@@ -33,7 +33,7 @@ onMounted(async () => {
 
 // Submit function
 const createUser = async () => {
-  if (!user.value.name || !user.value.email || !user.value.role || !user.value.password) {
+  if (!user.value.username || !user.value.email || !user.value.roleId || !user.value.password) {
     errorMessage.value = 'Veuillez remplir tous les champs.'
     return
   }
@@ -45,7 +45,7 @@ const createUser = async () => {
     await axios.post('http://localhost:5000/api/users', user.value)
     alert('Utilisateur créé avec succès !')
     // Reset form
-    user.value = { name: '', email: '', role: '', password: '' }
+    user.value = { username: '', email: '', role: '', password: '' }
     emit('close') // Close modal
   } catch (error) {
     errorMessage.value = "Erreur lors de la création de l'utilisateur."
@@ -69,7 +69,7 @@ const createUser = async () => {
       <div class="mb-4">
         <label class="block text-gray-300">Nom</label>
         <input
-          v-model="user.name"
+          v-model="user.username"
           type="text"
           class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
           placeholder="Nom complet"
@@ -91,10 +91,10 @@ const createUser = async () => {
       <div class="mb-4">
         <label class="block text-gray-300">Rôle</label>
         <select
-          v-model="user.role"
+          v-model="user.roleId"
           class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
         >
-          <option v-for="role in roles" :key="role.id" :value="role.name">
+          <option v-for="role in roles" :key="role.id" :value="role.id">
             {{ role.name }}
           </option>
         </select>
