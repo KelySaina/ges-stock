@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { User, Mail, Briefcase, Grid, List } from 'lucide-vue-next'
 import NavBar from '@/components/NavBar.vue'
 import router from '@/router'
+import CreateUser from '@/components/CreateUser.vue'
 
 const users = ref([
   { id: 1, name: 'Alice Dupont', email: 'alice@example.com', role: 'Admin' },
@@ -15,6 +16,8 @@ const users = ref([
   { id: 8, name: 'Nathan Robert', email: 'nathan@example.com', role: 'Utilisateur' },
 ])
 
+const search = ref('')
+
 const openProfile = (userId) => {
   router.push(`/user/profile/${userId}`)
 }
@@ -25,8 +28,20 @@ const isGridView = ref(false)
 
 // Pagination
 const paginatedUsers = computed(() => {
+  // Convert search query to lowercase for case-insensitive filtering
+  const searchQuery = search.value ? search.value.toLowerCase() : ''
+
+  // Filter users based on name or role
+  const filteredUsers = users.value.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery) ||
+      user.email.toLowerCase().includes(searchQuery) ||
+      user.role.toLowerCase().includes(searchQuery),
+  )
+
+  // Apply pagination AFTER filtering
   const start = (currentPage.value - 1) * itemsPerPage
-  return users.value.slice(start, start + itemsPerPage)
+  return filteredUsers.slice(start, start + itemsPerPage)
 })
 
 const totalPages = computed(() => Math.ceil(users.value.length / itemsPerPage))
@@ -36,6 +51,8 @@ const nextPage = () => {
 const prevPage = () => {
   if (currentPage.value > 1) currentPage.value--
 }
+
+const isModalOpen = ref(false)
 </script>
 
 <template>
@@ -43,7 +60,20 @@ const prevPage = () => {
     <NavBar page-name="Users" />
     <div class="p-6 bg-gray-900 min-h-screen text-white">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-bold">All Users</h2>
+        <button
+          class="p-2 px-8 bg-gray-700 rounded-lg hover:bg-gray-600"
+          @click="isModalOpen = true"
+        >
+          Add new user
+        </button>
+
+        <input
+          v-model="search"
+          type="text"
+          placeholder="Search by name, email or role"
+          class="w-1/4 p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
+        />
+
         <button
           @click="isGridView = !isGridView"
           class="p-2 bg-gray-700 rounded-lg hover:bg-gray-600"
@@ -51,6 +81,10 @@ const prevPage = () => {
           <Grid v-if="!isGridView" class="w-5 h-5" />
           <List v-else class="w-5 h-5" />
         </button>
+      </div>
+
+      <div>
+        <CreateUser :isOpen="isModalOpen" @close="isModalOpen = false" />
       </div>
 
       <!-- Vue Tableau -->
@@ -109,7 +143,7 @@ const prevPage = () => {
         <button
           @click="prevPage"
           :disabled="currentPage === 1"
-          class="px-4 py-2 bg-gray-700 rounded-lg disabled:opacity-50"
+          class="px-4 py-2 bg-gray-800 rounded-lg disabled:bg-gray-600"
         >
           Back
         </button>
@@ -117,7 +151,7 @@ const prevPage = () => {
         <button
           @click="nextPage"
           :disabled="currentPage === totalPages"
-          class="px-4 py-2 bg-gray-700 rounded-lg disabled:opacity-50"
+          class="px-4 py-2 bg-gray-800 rounded-lg disabled:bg-gray-600"
         >
           Next
         </button>
