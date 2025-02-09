@@ -30,7 +30,7 @@ onMounted(fetchUser)
 
 <template>
   <div class="h-screen p-4">
-    <NavBar pageName="Admin Dashboard" />
+    <NavBar />
     <!-- Dashboard Content -->
     <main class="p-6">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
