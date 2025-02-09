@@ -7,6 +7,7 @@ const router = useRouter()
 const sidebarOpen = ref(false)
 const logout = () => {
   localStorage.removeItem('token')
+  localStorage.removeItem('user_role')
   router.push('/login')
 }
 

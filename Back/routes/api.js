@@ -17,7 +17,12 @@ const router = express.Router();
 router.post("/login", authController.login);
 
 // User CRUD routes
-router.get("/users", authMiddleware, getAllUsers);
+router.get(
+  "/users",
+  authMiddleware,
+  checkPermission(["manage_users", "view_history"]),
+  getAllUsers
+);
 router.get("/users/:id", authMiddleware, getUserById);
 router.post("/users", authMiddleware, createUser);
 router.put("/users/:id", authMiddleware, updateUser);

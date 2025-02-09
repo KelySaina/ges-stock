@@ -22,8 +22,16 @@ const login = async () => {
       password: password.value,
     })
     localStorage.setItem('token', response.data.token)
-    // Redirection après connexion réussie
-    router.push('/dashboard')
+    localStorage.setItem('user_role', response.data.role)
+
+    const role = response.data.role
+    role == 1
+      ? router.push('/admin/dashboard')
+      : role == 2
+        ? router.push('/manager/dashboard')
+        : role == 3
+          ? router.push('/employee/dashboard')
+          : router.push('/login')
     loading.value = false
   } catch (error) {
     loading.value = false

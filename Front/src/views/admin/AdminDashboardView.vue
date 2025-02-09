@@ -17,7 +17,11 @@ const users = ref([])
 const token = localStorage.getItem('token')
 
 const fetchUser = async () => {
-  const userResponse = await axios.get('http://localhost:5000/api/users')
+  const userResponse = await axios.get('http://localhost:5000/api/users', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
   users.value = userResponse.data
 }
 
@@ -26,7 +30,7 @@ onMounted(fetchUser)
 
 <template>
   <div class="h-screen p-4">
-    <NavBar pageName="Dashboard" />
+    <NavBar pageName="Admin Dashboard" />
     <!-- Dashboard Content -->
     <main class="p-6">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
