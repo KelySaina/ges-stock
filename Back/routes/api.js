@@ -17,14 +17,14 @@ const router = express.Router();
 router.post("/login", authController.login);
 
 // User CRUD routes
-router.get("/users", getAllUsers);
-router.get("/users/:id", getUserById);
-router.post("/users", createUser);
-router.put("/users/:id", updateUser);
-router.delete("/users/:id", deleteUser);
+router.get("/users", authMiddleware, getAllUsers);
+router.get("/users/:id", authMiddleware, getUserById);
+router.post("/users", authMiddleware, createUser);
+router.put("/users/:id", authMiddleware, updateUser);
+router.delete("/users/:id", authMiddleware, deleteUser);
 
 // Roles routes
-router.get("/roles", getAllRoles);
+router.get("/roles", authMiddleware, getAllRoles);
 
 // Protected Routes
 // router.get(

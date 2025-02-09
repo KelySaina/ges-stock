@@ -14,6 +14,8 @@ const stockMovement = {
 
 const users = ref([])
 
+const token = localStorage.getItem('token')
+
 const fetchUser = async () => {
   const userResponse = await axios.get('http://localhost:5000/api/users')
   users.value = userResponse.data
