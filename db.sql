@@ -71,23 +71,28 @@ CREATE TABLE stock_current (
 );
 
 -- Trigger to Update Stock on Transactions
+DROP TRIGGER IF EXISTS update_stock_after_transaction
+
+ALTER TABLE stock_current ADD last_user_updated INT NULL AFTER last_updated;
+
 DELIMITER $$
-CREATE TRIGGER update_stock_after_transaction
-AFTER INSERT ON stock_transactions
+
+CREATE TRIGGER log_transaction_after_stock_update
+AFTER UPDATE ON stock_current
 FOR EACH ROW
 BEGIN
-  IF NEW.type = 'in' THEN
-    INSERT INTO stock_current (article_id, quantity)
-    VALUES (NEW.article_id, NEW.quantity)
-    ON DUPLICATE KEY UPDATE
-    quantity = quantity + NEW.quantity;
-  ELSE
-    INSERT INTO stock_current (article_id, quantity)
-    VALUES (NEW.article_id, -NEW.quantity)
-    ON DUPLICATE KEY UPDATE
-    quantity = quantity - NEW.quantity;
+  -- Check if quantity increased (Stock In)
+  IF NEW.quantity > OLD.quantity THEN
+    INSERT INTO stock_transactions (article_id, quantity, type, user_id, timestamp)
+    VALUES (NEW.article_id, NEW.quantity - OLD.quantity, 'in', CURRENT_USER, NOW());
+  
+  -- Check if quantity decreased (Stock Out)
+  ELSEIF NEW.quantity < OLD.quantity THEN
+    INSERT INTO stock_transactions (article_id, quantity, type, user_id, timestamp)
+    VALUES (NEW.article_id, OLD.quantity - NEW.quantity, 'out', CURRENT_USER, NOW());
   END IF;
 END$$
+
 DELIMITER ;
 
 -- Insert Initial Roles and Permissions
