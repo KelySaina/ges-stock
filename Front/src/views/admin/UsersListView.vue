@@ -24,7 +24,7 @@ onMounted(fetchUser)
 const search = ref('')
 
 const openProfile = (userId) => {
-  router.push(`/user/profile/${userId}`)
+  router.push(`/admin/user/profile/${userId}`)
 }
 
 const currentPage = ref(1)
