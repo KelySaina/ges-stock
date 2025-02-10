@@ -23,13 +23,33 @@ router.get(
   checkPermission(["manage_users", "view_history"]),
   getAllUsers
 );
-router.get("/users/:id", authMiddleware, getUserById);
-router.post("/users", authMiddleware, createUser);
-router.put("/users/:id", authMiddleware, updateUser);
-router.delete("/users/:id", authMiddleware, deleteUser);
+router.get(
+  "/users/:id",
+  authMiddleware,
+  checkPermission(["manage_users", "view_history"]),
+  getUserById
+);
+router.post(
+  "/users",
+  authMiddleware,
+  checkPermission(["manage_users", "view_history"]),
+  createUser
+);
+router.put(
+  "/users/:id",
+  authMiddleware,
+  checkPermission(["manage_users", "view_history"]),
+  updateUser
+);
+router.delete(
+  "/users/:id",
+  authMiddleware,
+  checkPermission(["manage_users", "view_history"]),
+  deleteUser
+);
 
 // Roles routes
-router.get("/roles", authMiddleware, getAllRoles);
+router.get("/roles", getAllRoles);
 
 // Protected Routes
 // router.get(

@@ -8,8 +8,14 @@ import axios from 'axios'
 
 const users = ref([])
 
+const token = localStorage.getItem('token')
+
 const fetchUser = async () => {
-  const userResponse = await axios.get('http://localhost:5000/api/users')
+  const userResponse = await axios.get('http://localhost:5000/api/users', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
   users.value = userResponse.data
 }
 

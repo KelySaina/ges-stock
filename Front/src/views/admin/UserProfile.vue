@@ -7,6 +7,8 @@ const route = useRoute()
 
 const userId = route.params.id
 
+const token = localStorage.getItem('token')
+
 // Réactif pour stocker les infos de l'utilisateur
 const user = ref({
   username: '',
@@ -23,7 +25,11 @@ const errorMessage = ref('')
 
 const fetchRoles = async () => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/roles`)
+    const response = await axios.get(`http://localhost:5000/api/roles`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     roles.value = response.data
   } catch (error) {
     console.error('Erreur chargement utilisateur:', error)
@@ -33,7 +39,11 @@ const fetchRoles = async () => {
 // Charger les infos de l'utilisateur depuis l'API
 const fetchUser = async () => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/users/${userId}`)
+    const response = await axios.get(`http://localhost:5000/api/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     console.log(response)
     user.value = response.data
   } catch (error) {
@@ -45,7 +55,11 @@ const fetchUser = async () => {
 const updateUser = async () => {
   isLoading.value = true
   try {
-    await axios.put(`http://localhost:5000/api/users/${userId}`, user.value)
+    await axios.put(`http://localhost:5000/api/users/${userId}`, user.value, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     isEditing.value = false
   } catch (error) {
     console.error(error)
