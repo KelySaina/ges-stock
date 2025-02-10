@@ -64,36 +64,38 @@ CREATE TABLE stock_transactions (
 
 -- Stock Current Table
 CREATE TABLE stock_current (
-  article_id INT PRIMARY KEY,
-  quantity INT NOT NULL,
-  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (article_id) REFERENCES articles(id)
+    article_id INT PRIMARY KEY,
+    quantity INT NOT NULL,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    last_user_updated INT NULL,
+    FOREIGN KEY (article_id) REFERENCES articles(id)
 );
 
 -- Trigger to Update Stock on Transactions
-DROP TRIGGER IF EXISTS update_stock_after_transaction
-
-ALTER TABLE stock_current ADD last_user_updated INT NULL AFTER last_updated;
+DROP TRIGGER IF EXISTS update_stock_after_transaction; 
 
 DELIMITER $$
 
-CREATE TRIGGER log_transaction_after_stock_update
+CREATE TRIGGER update_stock_after_transaction
 AFTER UPDATE ON stock_current
 FOR EACH ROW
 BEGIN
   -- Check if quantity increased (Stock In)
   IF NEW.quantity > OLD.quantity THEN
-    INSERT INTO stock_transactions (article_id, quantity, type, user_id, timestamp)
-    VALUES (NEW.article_id, NEW.quantity - OLD.quantity, 'in', CURRENT_USER, NOW());
+    INSERT INTO stock_transactions (article_id, quantity, type, user_id, created_at)
+    VALUES (NEW.article_id, NEW.quantity - OLD.quantity, 'in', NEW.last_user_updated, NOW());
+  END IF;
   
   -- Check if quantity decreased (Stock Out)
-  ELSEIF NEW.quantity < OLD.quantity THEN
-    INSERT INTO stock_transactions (article_id, quantity, type, user_id, timestamp)
-    VALUES (NEW.article_id, OLD.quantity - NEW.quantity, 'out', CURRENT_USER, NOW());
+  IF NEW.quantity < OLD.quantity THEN
+    INSERT INTO stock_transactions (article_id, quantity, type, user_id, created_at)
+    VALUES (NEW.article_id, OLD.quantity - NEW.quantity, 'out', NEW.last_user_updated, NOW());
   END IF;
 END$$
 
 DELIMITER ;
+
+
 
 -- Insert Initial Roles and Permissions
 INSERT INTO roles (name) VALUES ('admin'), ('manager'), ('employee');

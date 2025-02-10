@@ -13,7 +13,11 @@ router.use("/users", userRoutes);
 
 // Article Routes
 const articleRoutes = require("./articles");
-router.use("/articles", articleRoutes); // Correction ici (remplace `app.use` par `router.use`)
+router.use("/articles", articleRoutes);
+
+// Transactions Routes
+const transactionsRoute = require("./transactions");
+router.use("/transaction", transactionsRoute);
 
 // Roles Routes
 router.get("/roles", getAllRoles);
