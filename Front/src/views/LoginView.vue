@@ -30,7 +30,7 @@ const login = async () => {
       : role == 2
         ? router.push('/manager/dashboard')
         : role == 3
-          ? router.push('/employee/dashboard')
+          ? router.push('/employee/transactions')
           : router.push('/login')
     loading.value = false
   } catch (error) {

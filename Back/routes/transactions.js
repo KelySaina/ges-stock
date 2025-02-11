@@ -10,16 +10,16 @@ const checkPermission = require("../middlewares/rbac");
 // Perform stock transactions (entry/exit)
 router.post(
   "/",
-  //   authMiddleware,
-  //   checkPermission(["perform_transactions"]), // User must have this permission
+  authMiddleware,
+  checkPermission(["perform_transactions"]),
   transationArticle
 );
 
 // Check stock availability before removing stock
 router.post(
   "/check",
-  //   authMiddleware,
-  //   checkPermission(["perform_transactions"]), // Ensures only authorized users check stock
+  authMiddleware,
+  checkPermission(["perform_transactions"]),
   checkStock
 );
 

@@ -2,7 +2,8 @@ const pool = require("../config/db");
 
 // Function to add (entry) or remove (exit) stock
 const transationArticle = async (req, res) => {
-  const { article_id, quantity, action, user_id } = req.body;
+  const { article_id, quantity, action } = req.body;
+  const user_id = req.user.userId;
   const connection = await pool.getConnection();
 
   try {

@@ -1,7 +1,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { HomeIcon, UsersIcon, MenuIcon, HistoryIcon, PowerIcon } from 'lucide-vue-next'
+import {
+  HomeIcon,
+  UsersIcon,
+  MenuIcon,
+  HistoryIcon,
+  PowerIcon,
+  ArrowLeftRightIcon,
+  BriefcaseIcon,
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const sidebarOpen = ref(false)
@@ -43,10 +51,16 @@ const roleName = computed(() => {
 // Define navigation items dynamically based on role
 const navigationLinks = computed(() => {
   const links = [
-    { name: 'Dashboard', path: `/${roleName.value}/dashboard`, icon: HomeIcon, roles: [1, 2, 3] },
+    { name: 'Dashboard', path: `/${roleName.value}/dashboard`, icon: HomeIcon, roles: [1, 2] },
     { name: 'History', path: `/${roleName.value}/history`, icon: HistoryIcon, roles: [1, 2] },
     { name: 'Users', path: `/${roleName.value}/users`, icon: UsersIcon, roles: [1] },
-    { name: 'Articles', path: `/${roleName.value}/articles`, icon: UsersIcon, roles: [2, 3] },
+    {
+      name: 'Transactions',
+      path: `/${roleName.value}/transactions`,
+      icon: ArrowLeftRightIcon,
+      roles: [3],
+    },
+    { name: 'Articles', path: `/${roleName.value}/articles`, icon: BriefcaseIcon, roles: [2, 3] },
   ]
   return links.filter((link) => link.roles.includes(userRole.value))
 })

@@ -12,9 +12,9 @@ const checkPermission = (permissions) => {
       const userPermissions = rows.map((row) => row.name);
 
       // Vérification selon le mode choisi
-      const hasPermission = permissions.every((perm) =>
+      const hasPermission = permissions.some((perm) =>
         userPermissions.includes(perm)
-      ); // Doit avoir **au moins une** permission
+      );
 
       if (!hasPermission) {
         return res.status(403).json({ error: "Forbidden" });

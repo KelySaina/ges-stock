@@ -5,6 +5,7 @@ import UsersListView from '@/views/admin/UsersListView.vue'
 import UserProfile from '@/views/admin/UserProfile.vue'
 import ManagerDashboardView from '@/views/manager/ManagerDashboardView.vue'
 import EmployeeDashboardView from '@/views/employee/EmployeeDashboardView.vue'
+import ArticleListView from '@/views/employee/ArticleListView.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -26,8 +27,13 @@ const routes = [
     meta: { requiresAuth: true, role: 2 },
   },
   {
-    path: '/employee/dashboard',
+    path: '/employee/transactions',
     component: EmployeeDashboardView,
+    meta: { requiresAuth: true, role: 3 },
+  },
+  {
+    path: '/employee/articles',
+    component: ArticleListView,
     meta: { requiresAuth: true, role: 3 },
   },
 ]
@@ -45,7 +51,7 @@ router.beforeEach((to, from, next) => {
     // Rediriger vers le bon tableau de bord
     if (role === 1) next('/admin/dashboard')
     else if (role === 2) next('/manager/dashboard')
-    else if (role === 3) next('/employee/dashboard')
+    else if (role === 3) next('/employee/transactions')
     else next('/login')
   } else if (to.meta.requiresAuth) {
     if (!token || !role) {
