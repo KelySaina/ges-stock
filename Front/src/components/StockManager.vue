@@ -9,7 +9,7 @@ const selectedArticle = ref(null)
 const transactionType = ref('in')
 const quantity = ref(0)
 const token = localStorage.getItem('token')
-const msg = ref({ display: false, content: '' })
+const msg = ref({ display: false, content: '', success: false })
 
 // Fetch articles from API (Replace with your actual endpoint)
 const fetchArticles = async () => {
@@ -84,36 +84,85 @@ const validerTransaction = async () => {
     )
     const data = response.data
     msg.value.display = true
-    msg.value.content = data
+    msg.value.content = data.message
+    msg.value.success = data.success
     selectedArticle.value = null
     searchQuery.value = ''
+    quantity.value = 0
   } catch (error) {
     console.error('Error doing transaction:', error)
   }
+}
+
+const qteMsg = ref({ display: false, content: '' })
+
+const checkQte = async () => {
+  const response = await axios.post(
+    `http://localhost:5000/api/transaction/check`,
+    {
+      article_id: selectedArticle.value,
+      quantity: quantity.value,
+      transaction_type: transactionType.value,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+
+  const data = response.data
+  if (!data.available) {
+    qteMsg.value.display = true
+    qteMsg.value.content = 'Quantity is over the limit for this article'
+  } else {
+    qteMsg.value.display = false
+    qteMsg.value.content = ''
+  }
+  msg.value.display = false
 }
 </script>
 
 <template>
   <div class="bg-gray-800 text-white p-6 rounded-2xl shadow-lg w-2/3 relative">
     <h2 class="text-lg font-bold mb-4">Transaction</h2>
-    <p v-if="msg.display">{{ msg.content }}</p>
+    <p
+      v-if="msg.display && msg.success"
+      class="border-1 border-green-900 p-2 rounded-md text-green-400"
+    >
+      {{ msg.content }}
+    </p>
+    <p v-if="msg.display && !msg.success" class="border-1 border-red-900 rounded-md text-red-400">
+      {{ msg.content }}
+    </p>
 
     <!-- In / Out Radio -->
     <div class="mt-4">
-      <label class="block text-gray-300">Transaction Type</label>
-      <div class="flex gap-4 mt-2">
-        <label class="flex items-center gap-2">
+      <div class="grid grid-cols-2 gap-8 mt-2 p-4">
+        <label
+          :class="[
+            'bg-gray-800 rounded-md p-2 flex items-center gap-2 hover:cursor-pointer hover:bg-gray-900',
+            transactionType === 'in' ? 'shadow-lg bg-gray-900' : '',
+          ]"
+        >
           <input
             type="radio"
+            @change="checkQte"
             v-model="transactionType"
             value="in"
             class="form-radio text-blue-500 bg-gray-800 border-gray-700"
           />
           In
         </label>
-        <label class="flex items-center gap-2">
+        <label
+          :class="[
+            'bg-gray-800 rounded-md p-2 flex items-center gap-2 hover:cursor-pointer hover:bg-gray-900',
+            transactionType === 'out' ? 'shadow-lg shadow-lg bg-gray-900' : '',
+          ]"
+        >
           <input
             type="radio"
+            @change="checkQte"
             v-model="transactionType"
             value="out"
             class="form-radio text-blue-500 bg-gray-800 border-gray-700"
@@ -129,7 +178,7 @@ const validerTransaction = async () => {
       v-model="searchQuery"
       @input="selected = false"
       placeholder="Search article..."
-      class="w-full p-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
     />
 
     <!-- Filtered Dropdown -->
@@ -151,17 +200,21 @@ const validerTransaction = async () => {
     <div class="mt-4">
       <label class="block text-gray-300">Quantity</label>
       <input
+        :disabled="!selectedArticle"
+        @input="checkQte"
         type="number"
         v-model="quantity"
         min="1"
-        class="w-full p-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
       />
+      <span v-if="qteMsg.display" class="p-2 text-red-400">{{ qteMsg.content }}</span>
     </div>
 
     <!-- Validate Button -->
     <button
+      :disabled="qteMsg.display == true"
       @click="validerTransaction"
-      class="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-md transition"
+      class="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-md transition disabled:opacity-50"
     >
       Validate
     </button>

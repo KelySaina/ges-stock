@@ -6,6 +6,7 @@ import UserProfile from '@/views/admin/UserProfile.vue'
 import ManagerDashboardView from '@/views/manager/ManagerDashboardView.vue'
 import EmployeeDashboardView from '@/views/employee/EmployeeDashboardView.vue'
 import ArticleListView from '@/views/employee/ArticleListView.vue'
+import HistoryView from '@/views/HistoryView.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -13,6 +14,11 @@ const routes = [
   {
     path: '/admin/dashboard',
     component: AdminDashboardView,
+    meta: { requiresAuth: true, role: 1 },
+  },
+  {
+    path: '/admin/history',
+    component: HistoryView,
     meta: { requiresAuth: true, role: 1 },
   },
   { path: '/admin/users', component: UsersListView, meta: { requiresAuth: true, role: 1 } },
@@ -24,6 +30,11 @@ const routes = [
   {
     path: '/manager/dashboard',
     component: ManagerDashboardView,
+    meta: { requiresAuth: true, role: 2 },
+  },
+  {
+    path: '/manager/history',
+    component: HistoryView,
     meta: { requiresAuth: true, role: 2 },
   },
   {
@@ -47,7 +58,7 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   const role = Number(localStorage.getItem('user_role')) // Convertir en nombre
 
-  if (to.path === '/login' && token && role) {
+  if (to.path == '/login' && token && role) {
     // Rediriger vers le bon tableau de bord
     if (role === 1) next('/admin/dashboard')
     else if (role === 2) next('/manager/dashboard')

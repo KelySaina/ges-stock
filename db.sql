@@ -54,8 +54,10 @@ CREATE TABLE articles (
 CREATE TABLE stock_transactions (
   id INT PRIMARY KEY AUTO_INCREMENT,
   article_id INT,
+  old_quantity INT NOT NULL,
   quantity INT NOT NULL,
   type ENUM('in', 'out') NOT NULL,
+  operation VARCHAR (50) NULL,
   user_id INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (article_id) REFERENCES articles(id),
@@ -82,15 +84,30 @@ FOR EACH ROW
 BEGIN
   -- Check if quantity increased (Stock In)
   IF NEW.quantity > OLD.quantity THEN
-    INSERT INTO stock_transactions (article_id, quantity, type, user_id, created_at)
-    VALUES (NEW.article_id, NEW.quantity - OLD.quantity, 'in', NEW.last_user_updated, NOW());
+    INSERT INTO stock_transactions (article_id, old_quantity, quantity, type, operation, user_id, created_at)
+    VALUES (NEW.article_id, OLD.quantity ,NEW.quantity - OLD.quantity, 'in', 'UPDATE', NEW.last_user_updated, NOW());
   END IF;
   
   -- Check if quantity decreased (Stock Out)
   IF NEW.quantity < OLD.quantity THEN
-    INSERT INTO stock_transactions (article_id, quantity, type, user_id, created_at)
-    VALUES (NEW.article_id, OLD.quantity - NEW.quantity, 'out', NEW.last_user_updated, NOW());
+    INSERT INTO stock_transactions (article_id, old_quantity, quantity, type, operation, user_id, created_at)
+    VALUES (NEW.article_id, OLD.quantity ,OLD.quantity - NEW.quantity, 'out', 'UPDATE', NEW.last_user_updated, NOW());
   END IF;
+END$$
+
+DELIMITER ;
+
+-- Trigger to Update Stock on Insert article
+DROP TRIGGER IF EXISTS update_stock_after_insert; 
+
+DELIMITER $$
+
+CREATE TRIGGER update_stock_after_insert
+AFTER INSERT ON stock_current
+FOR EACH ROW
+BEGIN
+  INSERT INTO stock_transactions (article_id, old_quantity, quantity, type, operation, user_id, created_at)
+  VALUES (NEW.article_id, 0 ,NEW.quantity, 'in', 'INSERT', NEW.last_user_updated, NOW());
 END$$
 
 DELIMITER ;

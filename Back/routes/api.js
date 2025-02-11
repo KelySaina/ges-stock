@@ -19,6 +19,10 @@ router.use("/articles", articleRoutes);
 const transactionsRoute = require("./transactions");
 router.use("/transaction", transactionsRoute);
 
+// History Routes
+const historyRoute = require("./history");
+router.use("/history", historyRoute);
+
 // Roles Routes
 router.get("/roles", getAllRoles);
 
