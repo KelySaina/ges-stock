@@ -30,11 +30,11 @@ const toggleSidebar = () => {
 onMounted(() => {
   userRole.value = Number(localStorage.getItem('user_role'))
   userRole.value == 1
-    ? (pageName.value = 'Admin Dashboard')
+    ? (pageName.value = 'Admin')
     : userRole.value == 2
-      ? (pageName.value = 'Manager Dashboard')
+      ? (pageName.value = 'Manager')
       : userRole.value == 3
-        ? (pageName.value = 'Employee Dashboard')
+        ? (pageName.value = 'Employee')
         : (pageName.value = '')
 })
 
