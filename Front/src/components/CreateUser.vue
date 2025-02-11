@@ -21,6 +21,8 @@ const roles = ref([])
 const loading = ref(false)
 const errorMessage = ref('')
 
+const token = localStorage.getItem('token')
+
 // Fetch roles from API
 onMounted(async () => {
   try {
@@ -42,8 +44,13 @@ const createUser = async () => {
   errorMessage.value = ''
 
   try {
-    await axios.post('http://localhost:5000/api/users', user.value)
+    await axios.post('http://localhost:5000/api/users', user.value, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     alert('Utilisateur créé avec succès !')
+
     // Reset form
     user.value = { username: '', email: '', role: '', password: '' }
     emit('close') // Close modal

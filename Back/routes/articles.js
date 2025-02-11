@@ -27,15 +27,15 @@ router.get(
 
 router.post(
   "/",
-  // authMiddleware,
-  // checkPermission(["manage_articles"]), // Création = besoin de "manage_articles"
+  authMiddleware,
+  checkPermission(["manage_articles"]), // Création = besoin de "manage_articles"
   createArticle
 );
 
 router.put(
   "/:id",
-  // authMiddleware,
-  // checkPermission(["manage_articles"]), // Modification = besoin de "manage_articles"
+  authMiddleware,
+  checkPermission(["manage_articles"]), // Modification = besoin de "manage_articles"
   updateArticle
 );
 

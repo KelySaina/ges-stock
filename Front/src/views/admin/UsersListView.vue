@@ -89,7 +89,15 @@ const isModalOpen = ref(false)
       </div>
 
       <div>
-        <CreateUser :isOpen="isModalOpen" @close="isModalOpen = false" />
+        <CreateUser
+          :isOpen="isModalOpen"
+          @close="
+            () => {
+              isModalOpen = false
+              fetchUser()
+            }
+          "
+        />
       </div>
 
       <!-- Vue Tableau -->
