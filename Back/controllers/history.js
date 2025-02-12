@@ -10,6 +10,7 @@ const getHistory = async (req, res) => {
             st.type,
             st.created_at,
             a.name AS article_name,
+            a.id AS article_id,
             a.description AS article_description,
             u.username,
             r.name AS role_name,

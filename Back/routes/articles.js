@@ -14,7 +14,7 @@ const checkPermission = require("../middlewares/rbac");
 router.get(
   "/",
   authMiddleware,
-  checkPermission(["manage_articles", "perform_transactions"]),
+  checkPermission(["manage_articles", "perform_transactions", "view_stock"]),
   getAllArticles
 );
 
