@@ -21,22 +21,27 @@ const login = async () => {
       username: username.value,
       password: password.value,
     })
-    localStorage.setItem('token', response.data.token)
-    localStorage.setItem('user_role', response.data.role)
 
-    const role = response.data.role
-    role == 1
-      ? router.push('/admin/dashboard')
-      : role == 2
-        ? router.push('/manager/dashboard')
-        : role == 3
-          ? router.push('/employee/transactions')
-          : router.push('/login')
-    loading.value = false
+    if (!response.data.success) {
+      errorMessage.value = 'Your Account has been restricted'
+    } else {
+      localStorage.setItem('token', response.data.token)
+      localStorage.setItem('user_role', response.data.role)
+
+      const role = response.data.role
+      role == 1
+        ? router.push('/admin/dashboard')
+        : role == 2
+          ? router.push('/manager/dashboard')
+          : role == 3
+            ? router.push('/employee/transactions')
+            : router.push('/login')
+      loading.value = false
+    }
   } catch (error) {
     loading.value = false
     console.error(error)
-    errorMessage.value = 'Échec de la connexion. Vérifiez vos identifiants.'
+    errorMessage.value = 'Login failed. Verify your credentials.'
   }
 }
 </script>

@@ -10,6 +10,7 @@ const login = async (req, res) => {
           users.id, 
           users.email, 
           users.password_hash,
+          users.isRestricted,
           roles.id AS role_id
       FROM users
       JOIN user_roles ON users.id = user_roles.user_id
@@ -28,7 +29,11 @@ const login = async (req, res) => {
     { expiresIn: "5000h" }
   );
 
-  res.json({ success: true, token, role: user.role_id });
+  if (user.isRestricted) {
+    return res.json({ success: false, msg: "Account restricted" });
+  }
+
+  return res.json({ success: true, token, role: user.role_id });
 };
 
 module.exports = { login };

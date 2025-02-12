@@ -14,6 +14,7 @@ const user = ref({
   username: '',
   email: '',
   role_name: '',
+  isRestricted: 0,
 })
 
 const roles = ref([])
@@ -44,8 +45,8 @@ const fetchUser = async () => {
         Authorization: `Bearer ${token}`,
       },
     })
-    console.log(response)
     user.value = response.data
+    user.value.isRestricted = Boolean(response.data.isRestricted)
   } catch (error) {
     console.error('Erreur chargement utilisateur:', error)
   }
@@ -55,11 +56,18 @@ const fetchUser = async () => {
 const updateUser = async () => {
   isLoading.value = true
   try {
-    await axios.put(`http://localhost:5000/api/users/${userId}`, user.value, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    await axios.put(
+      `http://localhost:5000/api/users/${userId}`,
+      {
+        ...user.value,
+        isRestricted: user.value.isRestricted ? 1 : 0,
       },
-    })
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
     isEditing.value = false
   } catch (error) {
     console.error(error)
@@ -107,7 +115,7 @@ onMounted(async () => {
         </div>
 
         <div>
-          <label class="block text-gray-300">Rôle</label>
+          <label class="block text-gray-300">Role</label>
           <select
             v-model="user.role_id"
             :disabled="!isEditing"
@@ -117,6 +125,11 @@ onMounted(async () => {
               {{ role.name.charAt(0).toUpperCase() + role.name.slice(1) }}
             </option>
           </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <input type="checkbox" v-model="user.isRestricted" :disabled="!isEditing" id="restrict" />
+          <label for="restrict" class="block text-gray-300">Restrict Account</label>
         </div>
       </div>
 

@@ -30,6 +30,7 @@ const getUserById = async (req, res) => {
           users.username, 
           users.id, 
           users.email, 
+          users.isRestricted,
           roles.id AS role_id
       FROM users
       JOIN user_roles ON users.id = user_roles.user_id
@@ -101,7 +102,7 @@ const createUser = async (req, res) => {
 // Update a user
 const updateUser = async (req, res) => {
   const { id } = req.params; // Get user ID from the route parameter
-  const { username, password, email, role_id } = req.body;
+  const { username, password, email, role_id, isRestricted } = req.body;
 
   // Validate input
   if (!username && !password && !email) {
@@ -139,6 +140,10 @@ const updateUser = async (req, res) => {
       const hashedPassword = bcrypt.hashSync(password, salt);
       fieldsToUpdate.push("password_hash = ?");
       values.push(hashedPassword);
+    }
+    if (isRestricted != null) {
+      fieldsToUpdate.push("isRestricted = ?");
+      values.push(isRestricted);
     }
 
     // Add the user ID to the values array for the WHERE clause
