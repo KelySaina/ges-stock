@@ -128,7 +128,7 @@ const prevPage = () => {
           :disabled="currentPage === 1"
           class="px-4 py-2 bg-gray-800 rounded-lg disabled:bg-gray-600"
         >
-          Back
+          Previous
         </button>
         <span>Page {{ currentPage }} / {{ totalPages }}</span>
         <button

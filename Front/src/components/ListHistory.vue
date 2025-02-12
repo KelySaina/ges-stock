@@ -68,7 +68,7 @@ const clearFilters = () => {
         <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex items-center space-x-4">
           <TrendingUp class="text-green-500 w-8 h-8" />
           <div>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-300">Ajouts</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-300">Stock In</p>
             <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ totalIn }}</p>
           </div>
         </div>
@@ -76,7 +76,7 @@ const clearFilters = () => {
         <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex items-center space-x-4">
           <TrendingDown class="text-red-500 w-8 h-8" />
           <div>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-300">Sorties</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-300">Stock Out</p>
             <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ totalOut }}</p>
           </div>
         </div>
@@ -84,12 +84,12 @@ const clearFilters = () => {
 
       <!-- Filtres -->
       <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-        <h2 class="text-lg font-semibold text-gray-300 mb-2">Filtres</h2>
+        <h2 class="text-lg font-semibold text-gray-300 mb-2">Filters</h2>
         <div class="grid grid-cols-2 gap-2 text-white">
           <button @click="clearFilters" class="p-2 bg-gray-700 text-white rounded-md col-span-2">
-            Aujourd'hui
+            Today
           </button>
-          <label for="">Entre deux dates</label>
+          <label for="">Between 2 dates</label>
           <div class="col-span-2 flex justify-between">
             <input
               type="date"
@@ -105,7 +105,7 @@ const clearFilters = () => {
               :min="minEndDate"
             />
           </div>
-          <label for="">Une date precise</label>
+          <label for="">Date</label>
           <input
             type="date"
             v-model="selectedDate"
@@ -123,7 +123,7 @@ const clearFilters = () => {
 
     <!-- Liste des transactions -->
     <div class="col-span-2 bg-gray-800 p-4 rounded-lg shadow-md">
-      <h2 class="text-lg font-semibold text-gray-300 mb-4">Historique des Transactions</h2>
+      <h2 class="text-lg font-semibold text-gray-300 mb-4">Stock Movements History</h2>
       <div class="space-y-2">
         <div
           v-for="transaction in paginatedTransactions"
@@ -135,17 +135,20 @@ const clearFilters = () => {
         >
           <span class="text-sm">
             {{ transaction.role_name.charAt(0).toUpperCase() + transaction.role_name.slice(1) }}
-            <b>{{ transaction.username }}</b> a
-            {{ transaction.type === 'in' ? 'ajouté' : 'retiré' }}
+            <b>{{ transaction.username }}</b>
+            {{ transaction.type === 'in' ? 'added in' : 'got out' }}
             <span v-if="transaction.operation === 'INSERT'">
-              un nouvel article {{ transaction.article_name }} <br /><b
-                >Quantité: {{ transaction.sc_qty }}</b
-              >
+              a new {{ transaction.article_name }} <br /><b>Current quantity : 0</b>
             </span>
             <span v-else>
-              {{ transaction.quantity }} {{ transaction.article_name }} <br /><b>
-                Quantité: {{ transaction.sc_qty }} ->
-                {{ transaction.sc_qty + (transaction.quantity - transaction.old_quantity) }}
+              <b>{{ transaction.quantity }}</b> of <b>{{ transaction.article_name }}</b> <br />
+              <b>
+                Quantity: {{ transaction.old_quantity }} ->
+                {{
+                  transaction.type === 'in'
+                    ? transaction.old_quantity + transaction.quantity
+                    : transaction.old_quantity - transaction.quantity
+                }}
               </b>
             </span>
           </span>
@@ -163,15 +166,15 @@ const clearFilters = () => {
           :disabled="currentPage === 1"
           class="px-3 py-1 bg-gray-700 text-white rounded-md disabled:opacity-50"
         >
-          Précédent
+          Previous
         </button>
-        <span class="text-gray-300">Page {{ currentPage }} sur {{ totalPages }}</span>
+        <span class="text-gray-300">Page {{ currentPage }} of {{ totalPages }}</span>
         <button
           @click="currentPage++"
           :disabled="currentPage === totalPages"
           class="px-3 py-1 bg-gray-700 text-white rounded-md disabled:opacity-50"
         >
-          Suivant
+          Next
         </button>
       </div>
     </div>
