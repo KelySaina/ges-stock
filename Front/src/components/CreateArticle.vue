@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, defineProps, defineEmits } from 'vue'
+import { ref,  defineProps, defineEmits } from 'vue'
 import axios from 'axios'
 
 // Props & Emits
@@ -7,14 +7,12 @@ const props = defineProps({ isOpen: Boolean })
 const emit = defineEmits(['close'])
 
 
-// User data model
-const user = ref({
+// article data model
+const article = ref({
   name: '',
   description: '',
 })
 
-// Role list fetched from API
-const roles = ref([])
 
 // Loading state & error handling
 const loading = ref(false)
@@ -22,19 +20,9 @@ const errorMessage = ref('')
 
 const token = localStorage.getItem('token')
 
-// Fetch roles from API
-onMounted(async () => {
-  try {
-    const roleResponse = await axios.get('http://localhost:5000/api/roles')
-    roles.value = roleResponse.data
-  } catch (error) {
-    console.error('Erreur lors du chargement des rôles:', error)
-  }
-})
-
 // Submit function
-const createUser = async () => {
-  if (!user.value.username || !user.value.email || !user.value.roleId || !user.value.password) {
+const createArticle = async () => {
+  if (!article.value.name || !article.value.description) {
     errorMessage.value = 'Veuillez remplir tous les champs.'
     return
   }
@@ -43,18 +31,18 @@ const createUser = async () => {
   errorMessage.value = ''
 
   try {
-    await axios.post('http://localhost:5000/api/users', user.value, {
+    await axios.post('http://localhost:5000/api/articles', article.value, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-    alert('Utilisateur créé avec succès !')
+    alert('article ajouté avec succès !')
 
     // Reset form
-    user.value = { username: '', email: '', role: '', password: '' }
+    article.value = { name: '', description: '' }
     emit('close') // Close modal
   } catch (error) {
-    errorMessage.value = "Erreur lors de la création de l'utilisateur."
+    errorMessage.value = "Erreur lors de la ajout de l'article."
     console.error(error)
   } finally {
     loading.value = false
@@ -65,7 +53,7 @@ const createUser = async () => {
 <template>
   <div v-if="props.isOpen" class="fixed inset-0 flex justify-center items-center">
     <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-96">
-      <h2 class="text-xl font-bold text-white mb-4">Créer un utilisateur</h2>
+      <h2 class="text-xl font-bold text-white mb-4">Ajouter un article</h2>
 
       <div v-if="errorMessage" class="border border-red-600 text-red-500 p-2 rounded mb-4">
         {{ errorMessage }}
@@ -75,7 +63,7 @@ const createUser = async () => {
       <div class="mb-4">
         <label class="block text-gray-300">Nom</label>
         <input
-          v-model="user.username"
+          v-model="article.name"
           type="text"
           class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
           placeholder="Nom complet"
@@ -84,36 +72,12 @@ const createUser = async () => {
 
       <!-- Email -->
       <div class="mb-4">
-        <label class="block text-gray-300">Email</label>
+        <label class="block text-gray-300">Description</label>
         <input
-          v-model="user.email"
+          v-model="article.description"
           type="email"
           class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
           placeholder="Email"
-        />
-      </div>
-
-      <!-- Role -->
-      <div class="mb-4">
-        <label class="block text-gray-300">Rôle</label>
-        <select
-          v-model="user.roleId"
-          class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
-        >
-          <option v-for="role in roles" :key="role.id" :value="role.id">
-            {{ role.name }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Password -->
-      <div class="mb-4">
-        <label class="block text-gray-300">Mot de passe</label>
-        <input
-          v-model="user.password"
-          type="password"
-          class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
-          placeholder="Mot de passe"
         />
       </div>
 
@@ -126,7 +90,7 @@ const createUser = async () => {
           Annuler
         </button>
         <button
-          @click="createUser"
+          @click="createArticle"
           :disabled="loading"
           class="p-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
