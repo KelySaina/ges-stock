@@ -24,7 +24,7 @@ onMounted(fetchArticles)
 const search = ref('')
 
 const openProfile = (ArticleId) => {
-  router.push(`/admin/Article/profile/${ArticleId}`)
+  router.push(`/manager/articles/profile/${ArticleId}`)
 }
 
 const currentPage = ref(1)
