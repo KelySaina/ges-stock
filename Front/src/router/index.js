@@ -5,6 +5,7 @@ import UsersListView from '@/views/admin/UsersListView.vue'
 import UserProfile from '@/views/admin/UserProfile.vue'
 import ManagerDashboardView from '@/views/manager/ManagerDashboardView.vue'
 import EmployeeDashboardView from '@/views/employee/EmployeeDashboardView.vue'
+import ArticleListViewManager from '@/views/manager/ArticleListView.vue'
 import ArticleListView from '@/views/employee/ArticleListView.vue'
 import HistoryView from '@/views/HistoryView.vue'
 
@@ -30,6 +31,11 @@ const routes = [
   {
     path: '/manager/dashboard',
     component: ManagerDashboardView,
+    meta: { requiresAuth: true, role: 2 },
+  },
+  {
+    path: '/manager/articles',
+    component: ArticleListViewManager,
     meta: { requiresAuth: true, role: 2 },
   },
   {
