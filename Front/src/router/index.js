@@ -4,6 +4,8 @@ import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
 import UsersListView from '@/views/admin/UsersListView.vue'
 import UserProfile from '@/views/admin/UserProfile.vue'
 import ManagerDashboardView from '@/views/manager/ManagerDashboardView.vue'
+import ArticleListViewManager from '@/views/manager/ArticleListView.vue'
+import ArticleUpdate from '@/views/manager/ArticleUpdate.vue'
 import EmployeeDashboardView from '@/views/employee/EmployeeDashboardView.vue'
 import ArticleListView from '@/views/employee/ArticleListView.vue'
 import HistoryView from '@/views/HistoryView.vue'
@@ -21,7 +23,10 @@ const routes = [
     component: HistoryView,
     meta: { requiresAuth: true, role: 1 },
   },
-  { path: '/admin/users', component: UsersListView, meta: { requiresAuth: true, role: 1 } },
+  { path: '/admin/users',
+    component: UsersListView,
+    meta: { requiresAuth: true, role: 1 }
+  },
   {
     path: '/admin/user/profile/:id',
     component: UserProfile,
@@ -30,6 +35,16 @@ const routes = [
   {
     path: '/manager/dashboard',
     component: ManagerDashboardView,
+    meta: { requiresAuth: true, role: 2 },
+  },
+  {
+    path: '/manager/articles',
+    component: ArticleListViewManager,
+    meta: { requiresAuth: true, role: 2 },
+  },
+  {
+    path: '/manager/articles/profile/:id',
+    component: ArticleUpdate,
     meta: { requiresAuth: true, role: 2 },
   },
   {

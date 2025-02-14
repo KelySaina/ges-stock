@@ -27,8 +27,8 @@ router.get(
 
 router.post(
   "/",
-  // authMiddleware,
-  // checkPermission(["manage_articles"]), // Création = besoin de "manage_articles"
+  authMiddleware,
+  checkPermission(["manage_articles"]), // Création = besoin de "manage_articles"
   createArticle
 );
 
