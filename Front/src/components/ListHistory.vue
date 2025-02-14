@@ -138,7 +138,7 @@ const clearFilters = () => {
             <b>{{ transaction.username }}</b>
             {{ transaction.type === 'in' ? 'added in' : 'got out' }}
             <span v-if="transaction.operation === 'INSERT'">
-              a new {{ transaction.article_name }} <br /><b>Current quantity : 0</b>
+              a new article <b>{{ transaction.article_name }}</b> <br /><b>Current quantity : 0</b>
             </span>
             <span v-else>
               <b>{{ transaction.quantity }}</b> of <b>{{ transaction.article_name }}</b> <br />

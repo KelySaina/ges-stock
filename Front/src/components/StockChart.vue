@@ -1,12 +1,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Bar, Line } from 'vue-chartjs'
+import { Pie, Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   Title,
   Tooltip,
   Legend,
-  BarElement,
+  ArcElement, // Ajouté pour le Pie Chart
   LineElement,
   CategoryScale,
   LinearScale,
@@ -14,12 +14,11 @@ import {
 } from 'chart.js'
 import axios from 'axios'
 
-// Register Chart.js components
 ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  BarElement,
+  ArcElement, // Enregistrement nécessaire
   LineElement,
   CategoryScale,
   LinearScale,
@@ -59,42 +58,43 @@ const getStartOfWeek = (date) => {
 const processStockSummary = computed(() => {
   if (!transactions.value.length) return {}
 
-  const stockSummary = {}
-
-  transactions.value.forEach(({ article_name, sc_qty }) => {
-    if (!article_name || sc_qty === undefined) return
-    stockSummary[article_name] = sc_qty
-  })
-
-  return stockSummary
+  return transactions.value.reduce((acc, { article_name, sc_qty }) => {
+    if (!article_name || sc_qty === undefined) return acc
+    acc[article_name] = sc_qty
+    return acc
+  }, {})
 })
 
 // Function to generate a unique color based on article_id
 const generateColor = (id) => {
+  if (!id) id = Math.random().toString(36).substr(2, 5) // Ensure unique fallback ID
   const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
   const r = (hash * 37) % 255
   const g = (hash * 59) % 255
   const b = (hash * 83) % 255
-  return `rgba(${r}, ${g}, ${b}, 0.6)` // Adjust transparency
+  return `rgba(${r}, ${g}, ${b}, 0.6)`
 }
 
-// Compute bar chart data with unique colors per article
-const barChartData = computed(() => ({
-  labels: Object.keys(processStockSummary.value),
-  datasets: Object.entries(processStockSummary.value).map(([article, stock]) => {
-    // Find the corresponding article_id from history
-    const articleEntry = transactions.value.find((t) => t.article_name === article)
-    const articleId = articleEntry ? articleEntry.article_id : article // Fallback to article name if ID is missing
+const pieChartData = computed(() => {
+  const stockData = processStockSummary.value
 
-    return {
-      label: article, // Set label to article name
-      data: [stock], // Stock quantity
-      backgroundColor: generateColor(String(articleId)), // Generate color based on article_id
-      borderColor: generateColor(String(articleId)).replace('0.6', '1'), // Stronger border color
-      borderWidth: 1,
-    }
-  }),
-}))
+  return {
+    labels: Object.keys(stockData), // Article names as labels
+    datasets: [
+      {
+        label: 'Stock Quantity',
+        data: Object.values(stockData), // Stock quantity per article
+        backgroundColor: Object.keys(stockData).map((article) => {
+          const articleEntry = transactions.value.find((t) => t.article_name === article)
+          const articleId = articleEntry ? articleEntry.article_id : article
+          return generateColor(String(articleId)) // Assign unique colors
+        }),
+        borderColor: '#ffffff',
+        borderWidth: 1,
+      },
+    ],
+  }
+})
 
 // Compute data for line chart (selected article)
 const processStockMovement = computed(() => {
@@ -182,10 +182,10 @@ const chartOptions = {
     <!-- Bar Chart (Takes up full width on small screens, half on medium, 2/5 on large) -->
     <div class="col-span-1 md:col-span-2 lg:col-span-2 flex flex-col items-center">
       <h3 class="text-white text-xl font-semibold mb-2 text-center lg:text-left">
-        Total Stock Movements per Article
+        Total Stock per Article
       </h3>
       <div class="w-full">
-        <Bar v-if="barChartData.labels.length" :data="barChartData" :options="chartOptions" />
+        <Pie v-if="pieChartData.labels.length" :data="pieChartData" :options="chartOptions" />
         <p v-else class="text-white text-center">No data available for this week.</p>
       </div>
     </div>

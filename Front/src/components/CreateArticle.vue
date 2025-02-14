@@ -1,18 +1,16 @@
 <script setup>
-import { ref,  defineProps, defineEmits } from 'vue'
+import { ref, defineProps, defineEmits } from 'vue'
 import axios from 'axios'
 
 // Props & Emits
 const props = defineProps({ isOpen: Boolean })
 const emit = defineEmits(['close'])
 
-
 // article data model
 const article = ref({
   name: '',
   description: '',
 })
-
 
 // Loading state & error handling
 const loading = ref(false)
@@ -66,7 +64,7 @@ const createArticle = async () => {
           v-model="article.name"
           type="text"
           class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
-          placeholder="Nom complet"
+          placeholder="Name"
         />
       </div>
 
@@ -75,9 +73,9 @@ const createArticle = async () => {
         <label class="block text-gray-300">Description</label>
         <input
           v-model="article.description"
-          type="email"
+          type="text"
           class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
-          placeholder="Email"
+          placeholder="Description"
         />
       </div>
 

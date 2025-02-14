@@ -29,12 +29,13 @@ const toggleSidebar = () => {
 // Retrieve user role from localStorage on component mount
 onMounted(() => {
   userRole.value = Number(localStorage.getItem('user_role'))
+  const name = localStorage.getItem('user_name')
   userRole.value == 1
-    ? (pageName.value = 'Admin')
+    ? (pageName.value = 'Admin ' + name)
     : userRole.value == 2
-      ? (pageName.value = 'Manager')
+      ? (pageName.value = 'Manager ' + name)
       : userRole.value == 3
-        ? (pageName.value = 'Employee')
+        ? (pageName.value = 'Employee ' + name)
         : (pageName.value = '')
 })
 

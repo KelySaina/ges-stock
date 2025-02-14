@@ -31,7 +31,8 @@ const getArticleById = async (req, res) => {
 
 // Create a new article
 const createArticle = async (req, res) => {
-  const { name, description, created_by } = req.body;
+  const { name, description } = req.body;
+  const created_by = req.user.userId;
   const connection = await pool.getConnection();
 
   try {
@@ -63,7 +64,8 @@ const createArticle = async (req, res) => {
 // Update an article
 const updateArticle = async (req, res) => {
   const { id } = req.params;
-  const { name, description, created_by } = req.body;
+  const { name, description } = req.body;
+  const created_by = req.user.userId;
 
   if (
     name === undefined &&

@@ -5,13 +5,6 @@ import NavBar from '@/components/NavBar.vue'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 
-const labels = ['Semaine 1', 'Semaine 2', 'Semaine 3', 'Semaine 4']
-const stockMovement = {
-  'Article A': [10, -5, 20, -8],
-  'Article B': [-3, 15, -7, 12],
-  'Article C': [5, 10, -2, -10],
-}
-
 const users = ref([])
 
 const token = localStorage.getItem('token')
@@ -25,7 +18,21 @@ const fetchUser = async () => {
   users.value = userResponse.data
 }
 
-onMounted(fetchUser)
+const articles = ref([])
+
+const fetchArticles = async () => {
+  const userResponse = await axios.get('http://localhost:5000/api/articles', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  articles.value = userResponse.data
+}
+
+onMounted(() => {
+  fetchArticles()
+  fetchUser()
+})
 </script>
 
 <template>
@@ -49,7 +56,7 @@ onMounted(fetchUser)
           class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between"
         >
           <div>
-            <h3 class="text-4xl font-bold text-gray-900 dark:text-white">349</h3>
+            <h3 class="text-4xl font-bold text-gray-900 dark:text-white">{{ articles.length }}</h3>
             <p class="text-gray-600 dark:text-gray-300">Articles</p>
           </div>
           <BoxIcon size="48" color="white" />

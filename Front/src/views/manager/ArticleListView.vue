@@ -74,7 +74,7 @@ const isModalOpen = ref(false)
         <input
           v-model="search"
           type="text"
-          placeholder="Search by name, email or role"
+          placeholder="Search by name or description"
           class="w-1/4 p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500"
         />
 
@@ -105,7 +105,7 @@ const isModalOpen = ref(false)
           <thead>
             <tr class="border-b border-gray-700 text-white">
               <th class="p-3 w-1/3">Name</th>
-              <th class="p-3 w-1/3">Description</th>
+              <th class="p-3 w-2/3">Description</th>
             </tr>
           </thead>
           <tbody>
@@ -118,7 +118,7 @@ const isModalOpen = ref(false)
               <td class="p-3 w-1/3">
                 <span>{{ Article.name }}</span>
               </td>
-              <td class="p-3 w-1/3">
+              <td class="p-3 w-2/3">
                 <span>{{ Article.description }}</span>
               </td>
             </tr>
@@ -129,7 +129,7 @@ const isModalOpen = ref(false)
       <!-- Vue Grille -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div
-          v-for="article in paginatedArticles"
+          v-for="article in paginatedarticles"
           :key="article.id"
           class="bg-gray-800 p-4 rounded-lg shadow-md"
         >

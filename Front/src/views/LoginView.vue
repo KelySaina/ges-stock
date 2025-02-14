@@ -27,6 +27,7 @@ const login = async () => {
     } else {
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('user_role', response.data.role)
+      localStorage.setItem('user_name', response.data.name)
 
       const role = response.data.role
       role == 1

@@ -33,7 +33,12 @@ const login = async (req, res) => {
     return res.json({ success: false, msg: "Account restricted" });
   }
 
-  return res.json({ success: true, token, role: user.role_id });
+  return res.json({
+    success: true,
+    token,
+    role: user.role_id,
+    name: user.username,
+  });
 };
 
 module.exports = { login };
