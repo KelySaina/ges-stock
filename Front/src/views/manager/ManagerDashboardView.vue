@@ -63,7 +63,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <StockChart :labels="labels" :stockMovement="stockMovement" />
+        <StockChart />
       </div>
     </main>
   </div>

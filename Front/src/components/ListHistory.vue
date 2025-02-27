@@ -142,12 +142,12 @@ const clearFilters = () => {
           v-for="transaction in paginatedTransactions"
           :key="transaction.id"
           :class="[
-            'p-2 rounded-md shadow-md flex justify-between items-center',
+            'p-2 border-l-8  rounded-md shadow-md flex justify-between items-center',
             transaction.type === 'in'
-              ? 'bg-green-900 text-green-200'
+              ? 'border-green-600 bg-green-900 text-green-200'
               : transaction.type === 'del'
-                ? 'bg-yellow-900 text-yellow-200'
-                : 'bg-red-900 text-red-200',
+                ? 'border-yellow-600 bg-yellow-900 text-yellow-200'
+                : 'border-red-600 bg-red-900 text-red-200',
           ]"
         >
           <span class="text-sm">
@@ -161,7 +161,7 @@ const clearFilters = () => {
                   : 'got out'
             }}
             <span v-if="transaction.operation === 'INSERT'">
-              a new article <b>{{ transaction.article_name }}</b> <br /><b>Current quantity : 0</b>
+              a new article <b>{{ transaction.article_name }}</b> <br /><b>Current quantity : 1</b>
             </span>
             <span v-else-if="transaction.operation === 'DELETE'">
               the article <b>{{ transaction.article_name }}</b>

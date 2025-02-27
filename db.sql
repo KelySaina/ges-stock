@@ -118,7 +118,7 @@ AFTER INSERT ON stock_current
 FOR EACH ROW
 BEGIN
   INSERT INTO stock_transactions (article_id, old_quantity, quantity, type, operation, user_id, created_at)
-  VALUES (NEW.article_id, 0 ,NEW.quantity, 'in', 'INSERT', NEW.last_user_updated, NOW());
+  VALUES (NEW.article_id, 1 ,NEW.quantity, 'in', 'INSERT', NEW.last_user_updated, NOW());
 END$$
 
 DELIMITER ;

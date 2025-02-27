@@ -19,7 +19,8 @@ const fetchArticles = async () => {
         Authorization: `Bearer ${token}`,
       },
     })
-    const data = response.data
+    const data = response.data.filter((article) => article.soft_del === 0)
+
     articles.value = data.map((article) => ({
       id: article.id,
       name: article.name,
@@ -62,7 +63,7 @@ onMounted(async () => {
         Authorization: `Bearer ${token}`,
       },
     })
-    const article = response.data
+    const article = response.data.filter((article) => article.soft_del === 0)
     selectArticle(article)
   }
 })

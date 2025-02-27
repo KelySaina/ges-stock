@@ -45,7 +45,7 @@ const createArticle = async (req, res) => {
     const articleId = result.insertId;
 
     await connection.query(
-      "INSERT INTO stock_current (article_id, quantity, last_updated, last_user_updated) VALUES (?, 0, NOW(), ?)",
+      "INSERT INTO stock_current (article_id, quantity, last_updated, last_user_updated) VALUES (?, 1, NOW(), ?)",
       [articleId, created_by]
     );
 

@@ -34,7 +34,7 @@ const fetchHistory = async () => {
   const response = await axios.get('http://localhost:5000/api/history', {
     headers: { Authorization: `Bearer ${token}` },
   })
-  transactions.value = response.data
+  transactions.value = response.data.filter((t) => t.sc_qty !== -1060)
 
   // Select a random article after fetching
   if (transactions.value.length) {
@@ -46,7 +46,7 @@ const fetchHistory = async () => {
 onMounted(fetchHistory)
 
 // Define week days (Monday–Sunday)
-const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+const weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
 // Get start of the current week (Monday)
 const getStartOfWeek = (date) => {
@@ -115,7 +115,7 @@ const processStockMovement = computed(() => {
 
     const date = new Date(created_at)
     if (date >= startOfWeek && date <= endOfWeek) {
-      const dayLabel = date.toLocaleDateString('fr-FR', { weekday: 'long' }).toLowerCase()
+      const dayLabel = date.toLocaleDateString('en-EN', { weekday: 'long' }).toLowerCase()
       if (weekDays.includes(dayLabel)) {
         if (type === 'in') inMovement[dayLabel] += quantity
         else outMovement[dayLabel] += quantity
