@@ -16,7 +16,7 @@ const fetchArticles = async () => {
       Authorization: `Bearer ${token}`,
     },
   })
-  articles.value = ArticleResponse.data
+  articles.value = ArticleResponse.data.filter((article) => article.soft_del === 0)
 }
 
 onMounted(fetchArticles)

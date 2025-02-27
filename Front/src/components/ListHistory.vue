@@ -6,6 +6,7 @@ import axios from 'axios'
 
 const transactions = ref([])
 const token = localStorage.getItem('token')
+const today = format(new Date(), 'yyyy-MM-dd')
 const fetchHistory = async () => {
   const response = await axios.get('http://localhost:5000/api/history', {
     headers: {
@@ -24,7 +25,6 @@ const endDate = ref(null)
 const filteredTransactions = computed(() => {
   return transactions.value.filter((t) => {
     const transactionDate = parseISO(t.created_at)
-    const today = format(new Date(), 'yyyy-MM-dd')
 
     if (selectedDate.value) {
       return format(transactionDate, 'yyyy-MM-dd') === format(selectedDate.value, 'yyyy-MM-dd')
@@ -123,22 +123,48 @@ const clearFilters = () => {
 
     <!-- Liste des transactions -->
     <div class="col-span-2 bg-gray-800 p-4 rounded-lg shadow-md">
-      <h2 class="text-lg font-semibold text-gray-300 mb-4">Stock Movements History</h2>
+      <h2 class="text-lg font-semibold text-gray-300 mb-4">
+        Stock Movements History
+        {{
+          selectedDate
+            ? ' of ' + format(new Date(selectedDate), 'dd-MM-yyyy')
+            : startDate && endDate
+              ? ' from ' +
+                format(new Date(startDate), 'dd-MM-yyyy') +
+                ' to ' +
+                format(new Date(endDate), 'dd-MM-yyyy')
+              : ' of ' + format(new Date(today), 'dd-MM-yyyy')
+        }}
+      </h2>
+
       <div class="space-y-2">
         <div
           v-for="transaction in paginatedTransactions"
           :key="transaction.id"
           :class="[
             'p-2 rounded-md shadow-md flex justify-between items-center',
-            transaction.type === 'in' ? 'bg-green-900 text-green-200' : 'bg-red-900 text-red-200',
+            transaction.type === 'in'
+              ? 'bg-green-900 text-green-200'
+              : transaction.type === 'del'
+                ? 'bg-yellow-900 text-yellow-200'
+                : 'bg-red-900 text-red-200',
           ]"
         >
           <span class="text-sm">
             {{ transaction.role_name.charAt(0).toUpperCase() + transaction.role_name.slice(1) }}
             <b>{{ transaction.username }}</b>
-            {{ transaction.type === 'in' ? 'added in' : 'got out' }}
+            {{
+              transaction.type === 'in'
+                ? 'added in'
+                : transaction.type === 'del'
+                  ? 'deleted '
+                  : 'got out'
+            }}
             <span v-if="transaction.operation === 'INSERT'">
               a new article <b>{{ transaction.article_name }}</b> <br /><b>Current quantity : 0</b>
+            </span>
+            <span v-else-if="transaction.operation === 'DELETE'">
+              the article <b>{{ transaction.article_name }}</b>
             </span>
             <span v-else>
               <b>{{ transaction.quantity }}</b> of <b>{{ transaction.article_name }}</b> <br />

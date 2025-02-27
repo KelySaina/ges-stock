@@ -21,12 +21,12 @@ const fetchUser = async () => {
 const articles = ref([])
 
 const fetchArticles = async () => {
-  const userResponse = await axios.get('http://localhost:5000/api/articles', {
+  const articlesResponse = await axios.get('http://localhost:5000/api/articles', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
-  articles.value = userResponse.data
+  articles.value = articlesResponse.data.filter((article) => article.soft_del === 0)
 }
 
 onMounted(() => {

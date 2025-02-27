@@ -10,12 +10,12 @@ const articles = ref([])
 const token = localStorage.getItem('token')
 
 const fetchArticles = async () => {
-  const userResponse = await axios.get('http://localhost:5000/api/articles', {
+  const articleResponse = await axios.get('http://localhost:5000/api/articles', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
-  articles.value = userResponse.data
+  articles.value = articleResponse.data.filter((article) => article.soft_del === 0)
 }
 
 onMounted(fetchArticles)

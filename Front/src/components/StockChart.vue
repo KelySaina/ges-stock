@@ -46,7 +46,7 @@ const fetchHistory = async () => {
 onMounted(fetchHistory)
 
 // Define week days (Monday–Sunday)
-const weekDays = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
+const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 // Get start of the current week (Monday)
 const getStartOfWeek = (date) => {
@@ -59,7 +59,7 @@ const processStockSummary = computed(() => {
   if (!transactions.value.length) return {}
 
   return transactions.value.reduce((acc, { article_name, sc_qty }) => {
-    if (!article_name || sc_qty === undefined) return acc
+    if (!article_name || sc_qty === undefined || sc_qty === -1060) return acc
     acc[article_name] = sc_qty
     return acc
   }, {})

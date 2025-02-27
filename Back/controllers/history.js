@@ -21,6 +21,8 @@ const getHistory = async (req, res) => {
          JOIN users AS u ON st.user_id = u.id
          JOIN user_roles AS ur ON u.id = ur.user_id
          JOIN roles AS r ON r.id = ur.role_id
+         ORDER BY st.created_at
+         DESC
          `
     );
 

@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
-// import router from '@/router'
+import router from '@/router'
 import NavBar from '@/components/NavBar.vue'
 const route = useRoute()
 
@@ -59,28 +59,28 @@ const updateArt = async () => {
     isLoading.value = false
   }
 }
-// const supprimerArt = async () => {
-//   const confirmation = confirm("Êtes-vous sûr de vouloir supprimer cet article ?");
+const supprimerArt = async () => {
+  const confirmation = confirm('Êtes-vous sûr de vouloir supprimer cet article ?')
 
-//   if (!confirmation) return;
+  if (!confirmation) return
 
-//   isLoading.value = true;
-//   try {
-//     await axios.delete(`http://localhost:5000/api/articles/${articleId}`, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
+  isLoading.value = true
+  try {
+    await axios.delete(`http://localhost:5000/api/articles/${articleId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
 
-//     // Redirection après suppression
-//     router.push('/manager/articles');
-//   } catch (error) {
-//     console.error(error);
-//     errorMessage.value = "Erreur lors de la suppression.";
-//   } finally {
-//     isLoading.value = false;
-//   }
-// };
+    // Redirection après suppression
+    router.push('/manager/articles')
+  } catch (error) {
+    console.error(error)
+    errorMessage.value = 'Erreur lors de la suppression.'
+  } finally {
+    isLoading.value = false
+  }
+}
 
 // Charger les données à l'affichage du composant
 onMounted(async () => {
@@ -128,13 +128,13 @@ onMounted(async () => {
         >
           Modifier
         </button>
-        <!-- <button
+        <button
           v-if="!isEditing"
           @click="supprimerArt"
           class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg"
         >
           Supprimer
-        </button> -->
+        </button>
 
         <button
           v-if="isEditing"

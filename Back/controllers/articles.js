@@ -4,7 +4,7 @@ const pool = require("../config/db");
 const getAllArticles = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT id, name, description, created_by, created_at FROM articles;`
+      `SELECT id, name, description, created_by, created_at, soft_del FROM articles;`
     );
     res.status(200).json(rows);
   } catch (err) {
@@ -111,11 +111,21 @@ const updateArticle = async (req, res) => {
 // Delete an article
 const deleteArticle = async (req, res) => {
   const { id } = req.params;
+  const created_by = req.user.userId;
   try {
-    const [result] = await pool.query("DELETE FROM articles WHERE id = ?", [
-      id,
-    ]);
+    const [result] = await pool.query(
+      "UPDATE articles SET soft_del = 1 WHERE id = ?",
+      [id]
+    );
     if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+
+    const [result2] = await pool.query(
+      "UPDATE stock_current SET quantity = -1060, last_user_updated = ? WHERE article_id = ?",
+      [created_by, id]
+    );
+    if (result2.affectedRows === 0) {
       return res.status(404).json({ message: "Article not found" });
     }
     res.status(200).json({ message: "Article deleted" });
