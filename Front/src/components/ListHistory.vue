@@ -186,22 +186,35 @@ const clearFilters = () => {
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-between items-center mt-4">
-        <button
-          @click="currentPage--"
-          :disabled="currentPage === 1"
-          class="px-3 py-1 bg-gray-700 text-white rounded-md disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span class="text-gray-300">Page {{ currentPage }} of {{ totalPages }}</span>
-        <button
-          @click="currentPage++"
-          :disabled="currentPage === totalPages"
-          class="px-3 py-1 bg-gray-700 text-white rounded-md disabled:opacity-50"
-        >
-          Next
-        </button>
+      <div class="fixed bottom-8 flex flex-col w-[53.5%]">
+        <div class="flex justify-between items-center mt-4">
+          <button
+            @click="currentPage--"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 bg-gray-700 text-white rounded-md disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span class="text-gray-300">Page {{ currentPage }} of {{ totalPages }}</span>
+          <button
+            @click="currentPage++"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-1 bg-gray-700 text-white rounded-md disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+        <div class="flex justify-between items-center mt-4 text-white">
+          <span class="border border-green-300 rounded-md text-green-300 p-2 font-bold"
+            >INSERTS: {{ transactions.filter((t) => t.operation === 'INSERT').length }}</span
+          >
+          <span class="border border-blue-300 rounded-md text-blue-300 p-2 font-bold"
+            >UPDATES: {{ transactions.filter((t) => t.operation === 'UPDATE').length }}</span
+          >
+          <span class="border border-red-300 rounded-md text-red-300 p-2 font-bold"
+            >DELETES: {{ transactions.filter((t) => t.operation === 'DELETE').length }}</span
+          >
+        </div>
       </div>
     </div>
   </div>
